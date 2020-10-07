@@ -1,0 +1,64 @@
+<html>
+<head>
+<style>
+input {
+	width:400px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+	<input v-model="search" type="search" placeholder="Enter a search term here (3 char min)">
+	<span v-if="results">Total for this search: {{ total }}</span>
+	<table v-if="results">
+		<thead>
+			<tr>
+				<th>Path</th>
+				<th>Views</th>
+			</tr>
+		</thead>
+		<tr v-for="result in results">
+			<td>{{result.path}}</td>
+			<td>{{result.views}}</td>
+		</tr>
+	</table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+const app = new Vue({
+	el:'#app',
+	data:{
+		data:null,
+		search:''
+	},
+	async created() {
+		let resp = await fetch('./output.json');
+		console.log('test');
+		try {
+			this.data = await resp.json();
+		} catch(e) {
+			console.log('wtf');
+			console.error(e);
+		}
+	},
+	computed: {
+		results() {
+			if(this.search.length < 3 || !this.data) return;
+			return this.data.filter(d => {
+				return d.path.indexOf(this.search) >= 0;
+			});
+		},
+		total() {
+			if(!this.results || this.results.length === 0) return 0;
+			return this.results.reduce((prev,curr) => {
+				return prev + curr.views;
+			}, 0);
+		}
+	}
+});
+</script>
+</body>
+</html>

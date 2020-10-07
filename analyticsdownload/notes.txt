@@ -1,0 +1,7 @@
+To be done better with a readme
+
+ ingestion: {
+    status: 'current',
+    ingestion_start: 1575158400000,
+    ingestion_end: 1602014400000
+  }
